@@ -1,10 +1,45 @@
 require 'tk'
-root=TkRoot.new(){title "Hannah's Fucking Button Holy Shit"}
-button=TkButton.new(root){
-text "Click Me, Motherfucker"
-command proc {
-print "OH EM GEE "
+class Drawing
+def on_click(x,y)
+@first_x=x
+@first_y=y
+@lineDrawn=TkcLine.new(@canvas,x,y,x,y)
+end
+def over_path(x,y)
+if @lineDrawn
+@lineDrawn.coords @first_x, @first_y, x, y
+end
+end
+def on_release(x,y)
+if @lineDrawn
+@lineDrawn.coords @first_x, @first_y, x, y
+@lineDrawn.fill 'blue'
+@lineDrawn=nil
+end
+end
+def initialize(toplevel)
+@canvas=TkCanvas.new(toplevel)
+@canvas.pack
+@first_x=@first_y=0
+@canvas.bind("1", proc {|e| on_click(e.x, e.y)})
+@canvas.bind("2", proc {puts @canvas.postscript({}) })
+@canvas.bind("B1-Motion", proc{|x,y| over_path(x,y)}, "%x %y")
+@canvas.bind("ButtonRelease-1", proc{|x, y| on_release(x,y)}, "%x %y")
+end
+end
+
+root=TkRoot.new{title "Vector Drawing Window"}
+lineButton=TkButton.new(root){
+text "Draw Line (Interactive)"
+command proc{Draw.new(root)}
 }
+lineButton.pack("side"=>"top","fill"=>"x")
+
+exitButton=TkButton.new(root){
+text "Close Window"
+command proc {exit}
 }
-button.pack("fill"=>"x")
+exitButton.pack("side"=>"bottom","fill"=>"x")
+
 Tk.mainloop
+
