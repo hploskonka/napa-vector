@@ -1,0 +1,10 @@
+require 'tk'
+root=TkRoot.new(){title "Hannah's Fucking Button Holy Shit"}
+button=TkButton.new(root){
+text "Click Me, Motherfucker"
+command proc {
+print "OH EM GEE "
+}
+}
+button.pack("fill"=>"x")
+Tk.mainloop
